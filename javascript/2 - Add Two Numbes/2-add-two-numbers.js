@@ -27,3 +27,30 @@ The number of nodes in each linked list is in the range [1, 100].
 0 <= Node.val <= 9
 It is guaranteed that the list represents a number that does not have leading zeros.
 */
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode} l1
+ * @param {ListNode} l2
+ * @return {ListNode}
+ */
+var addTwoNumbers = function (l1, l2) {
+    const result = new ListNode() // Cria um novo nó para o resultado
+    let current = result // Inicializa o ponteiro atual para o nó de resultado
+
+    while (l1 || l2) {
+        // Soma os valores dos nós correspondentes
+        const sum = (l1 ? l1.val : 0) + (l2 ? l2.val : 0)
+        current.val = sum % 10 // Guarda o resto da divisão por 10
+        l1 = l1 ? l1.next : null // Avança para o próximo nó de l1
+        l2 = l2 ? l2.next : null // Avança para o próximo nó de l2
+        current = current.next // Avança para o próximo nó de resultado
+    }
+
+    return result
+};

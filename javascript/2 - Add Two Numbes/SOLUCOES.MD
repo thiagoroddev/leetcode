@@ -227,17 +227,17 @@ var addTwoNumbers = function(l1, l2) {
 ### Código Comentado
 ```javascript
 var addTwoNumbers = function(l1, l2) {
-    let dummy = new ListNode(0);
-    let curr = dummy;
-    let carry = 0;
+    let dummy = new ListNode(0); // Cria um nó fictício (dummy) para facilitar a construção da lista resultado
+    let curr = dummy; // Inicializa o ponteiro atual para o nó de resultado
+    let carry = 0; // Variável para armazenar o "vai um" (carry)
     
     while (l1 || l2 || carry) {
         // Usa operador OR para pegar valor ou 0
         const sum = (l1?.val || 0) + (l2?.val || 0) + carry;
         
-        carry = Math.floor(sum / 10);
-        curr.next = new ListNode(sum % 10);
-        curr = curr.next;
+        carry = Math.floor(sum / 10); // Calcula o novo carry
+        curr.next = new ListNode(sum % 10); // Cria o novo nó com o dígito
+        curr = curr.next; // Avança para o próximo nó de resultado
         
         // Usa operador de encadeamento opcional
         l1 = l1?.next;
