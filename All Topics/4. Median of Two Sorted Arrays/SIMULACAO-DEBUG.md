@@ -932,3 +932,1147 @@ Complexidade: O(log(min(m,n)))
 **💡 Lembre-se:** Binary Search é um dos algoritmos mais importantes em Ciência da Computação. Dominá-lo abre portas para resolver problemas complexos de forma eficiente!
 
 **🎯 Dica Final:** Se ainda está confuso, volte ao exemplo simples do "jogo de adivinhação" e depois retorne ao código. A intuição vem com prática! 💪
+
+######################################################################################################
+
+# 🐛 Debug Detalhado: Binary Search - Caso de Teste [1, 2] e [890, 989, 994, 999]
+
+## 🎯 Objetivo
+
+Encontrar a mediana de dois arrays ordenados usando Binary Search com **O(log(min(m,n)))**.
+
+---
+
+## 📋 Dados de Entrada
+
+```javascript
+nums1 = [1, 2]
+nums2 = [890, 989, 994, 999]
+
+Objetivo: Encontrar a mediana
+```
+
+---
+
+## 🤔 Análise Inicial do Problema
+
+### Passo 1: Se juntássemos os arrays (conceptualmente)
+
+```javascript
+Array combinado (ordenado): [1, 2, 890, 989, 994, 999]
+                            └─────┴─────────────────┘
+                            nums1      nums2
+
+Tamanho total: 6 elementos (PAR)
+```
+
+### Passo 2: Mediana esperada (array PAR)
+
+```
+Array: [1, 2, 890, 989, 994, 999]
+Índices: 0  1   2    3    4    5
+
+Para array PAR, a mediana é a média dos dois elementos centrais:
+Posição 1: índice 2 → 890
+Posição 2: índice 3 → 989
+
+Mediana = (890 + 989) / 2 = 939.5
+```
+
+---
+
+## 🔍 Começando o Debug
+
+### 🎬 INÍCIO DA EXECUÇÃO
+
+```javascript
+console.log("🎯 INÍCIO DO ALGORITMO");
+console.log("nums1:", [1, 2]);
+console.log("nums2:", [890, 989, 994, 999]);
+```
+
+**Saída:**
+```
+🎯 INÍCIO DO ALGORITMO
+nums1: [ 1, 2 ]
+nums2: [ 890, 989, 994, 999 ]
+```
+
+---
+
+### 📊 PASSO 1: Garantir que nums1 é o Array Menor
+
+```javascript
+if (nums1.length > nums2.length) {
+    console.log("⚠️  nums1 é maior que nums2, fazendo SWAP");
+    [nums1, nums2] = [nums2, nums1];
+}
+```
+
+**Análise:**
+```
+nums1.length = 2
+nums2.length = 4
+
+2 > 4? NÃO
+
+✅ nums1 já é o menor, não precisa fazer swap!
+```
+
+**Saída:**
+```
+✅ nums1 já é o menor array (2 < 4)
+```
+
+---
+
+### 📊 PASSO 2: Informações Básicas
+
+```javascript
+const m = nums1.length;  // 2
+const n = nums2.length;  // 4
+const totalElements = m + n;  // 6
+
+console.log("📊 Informações:");
+console.log(`   m (tamanho nums1): ${m}`);
+console.log(`   n (tamanho nums2): ${n}`);
+console.log(`   total: ${totalElements}`);
+console.log(`   É PAR? ${totalElements % 2 === 0}`);
+```
+
+**Saída:**
+```
+📊 Informações:
+   m (tamanho nums1): 2
+   n (tamanho nums2): 4
+   total: 6
+   É PAR? true
+```
+
+**Interpretação:**
+- ✅ Total de 6 elementos (PAR)
+- ✅ Mediana será a MÉDIA dos dois elementos centrais
+- ✅ Busca binária em nums1 (o menor, m=2)
+- ✅ Complexidade: O(log 2) = 1 iteração (muito rápido!)
+
+---
+
+### 🔍 PASSO 3: Configurar Binary Search
+
+```javascript
+let low = 0;      // Mínimo de elementos de nums1 à esquerda
+let high = m;     // Máximo de elementos de nums1 à esquerda
+
+console.log("🔍 INICIANDO BINARY SEARCH");
+console.log(`   Espaço de busca: [${low}, ${high}]`);
+console.log(`   Significa: Podemos pegar de 0 até 2 elementos de nums1`);
+```
+
+**Saída:**
+```
+🔍 INICIANDO BINARY SEARCH
+   Espaço de busca: [0, 2]
+   Significa: Podemos pegar de 0 até 2 elementos de nums1
+```
+
+**Interpretação:**
+```
+Possibilidades de partition1:
+
+partition1 = 0 → Pegar NENHUM elemento de nums1
+nums1: [] | [1, 2]
+
+partition1 = 1 → Pegar 1 elemento de nums1
+nums1: [1] | [2]
+
+partition1 = 2 → Pegar TODOS os elementos de nums1
+nums1: [1, 2] | []
+
+O Binary Search vai testar essas opções de forma eficiente!
+```
+
+---
+
+## 🔄 ITERAÇÃO 1
+
+### ═══════════════════════════════════════════════════════════
+
+```
+🔄 ITERAÇÃO 1
+═══════════════════════════════════════════════════════════
+```
+
+---
+
+### 📍 Calculando Partições
+
+```javascript
+const partition1 = Math.floor((low + high) / 2);
+console.log(`   partition1 = Math.floor((${low} + ${high}) / 2) = ${partition1}`);
+```
+
+**Cálculo:**
+```
+partition1 = Math.floor((0 + 2) / 2)
+          = Math.floor(2 / 2)
+          = Math.floor(1)
+          = 1
+```
+
+**Interpretação:**
+```
+partition1 = 1 significa:
+→ Pegar 1 elemento de nums1 para o lado ESQUERDO
+→ nums1: [1] | [2]
+```
+
+---
+
+```javascript
+const partition2 = Math.floor((m + n + 1) / 2) - partition1;
+console.log(`   partition2 = Math.floor((${m} + ${n} + 1) / 2) - ${partition1} = ${partition2}`);
+```
+
+**Cálculo:**
+```
+partition2 = Math.floor((2 + 4 + 1) / 2) - 1
+          = Math.floor(7 / 2) - 1
+          = Math.floor(3.5) - 1
+          = 3 - 1
+          = 2
+```
+
+**Interpretação:**
+```
+partition2 = 2 significa:
+→ Pegar 2 elementos de nums2 para o lado ESQUERDO
+→ nums2: [890, 989] | [994, 999]
+```
+
+---
+
+**Saída Completa:**
+```
+📍 Calculando partições:
+   partition1 = Math.floor((0 + 2) / 2) = 1
+   partition2 = Math.floor((2 + 4 + 1) / 2) - 1 = 2
+
+   Interpretação:
+   → Pegar 1 elemento(s) de nums1
+   → Pegar 2 elemento(s) de nums2
+   → Total à esquerda: 3 elementos
+   → Total à direita: 3 elementos
+```
+
+---
+
+### ✂️ Visualização do CORTE
+
+```
+✂️  Visualização do CORTE:
+   nums1: [1] | [2]
+          ─┘   └─
+          ↑     ↑
+      maxLeft1  minRight1
+      
+   nums2: [890, 989] | [994, 999]
+          ─────────┘   └─────────
+               ↑             ↑
+           maxLeft2      minRight2
+```
+
+**Representação Visual Completa:**
+
+```
+LADO ESQUERDO (3 elementos):
+┌───────────────────────┐
+│  De nums1: [1]        │
+│  De nums2: [890, 989] │
+│  Total: [1, 890, 989] │
+└───────────────────────┘
+
+LADO DIREITO (3 elementos):
+┌───────────────────────┐
+│  De nums1: [2]        │
+│  De nums2: [994, 999] │
+│  Total: [2, 994, 999] │
+└───────────────────────┘
+```
+
+**Saída:**
+```
+✂️  Visualização do CORTE:
+   nums1: [1] | [2]
+   nums2: [890, 989] | [994, 999]
+
+🎨 Representação Conceitual:
+   Lado ESQUERDO:  [1, 890, 989]     (3 elementos)
+   Lado DIREITO:   [2, 994, 999]     (3 elementos)
+```
+
+---
+
+### 📊 Valores nas BORDAS do Corte
+
+```javascript
+const maxLeft1 = partition1 === 0 ? -Infinity : nums1[partition1 - 1];
+const minRight1 = partition1 === m ? Infinity : nums1[partition1];
+const maxLeft2 = partition2 === 0 ? -Infinity : nums2[partition2 - 1];
+const minRight2 = partition2 === n ? Infinity : nums2[partition2];
+```
+
+**Cálculo de maxLeft1:**
+```
+maxLeft1 = partition1 === 0 ? -Infinity : nums1[partition1 - 1]
+         = 1 === 0 ? -Infinity : nums1[1 - 1]
+         = false ? -Infinity : nums1[0]
+         = nums1[0]
+         = 1
+```
+
+**Cálculo de minRight1:**
+```
+minRight1 = partition1 === m ? Infinity : nums1[partition1]
+          = 1 === 2 ? Infinity : nums1[1]
+          = false ? Infinity : nums1[1]
+          = nums1[1]
+          = 2
+```
+
+**Cálculo de maxLeft2:**
+```
+maxLeft2 = partition2 === 0 ? -Infinity : nums2[partition2 - 1]
+         = 2 === 0 ? -Infinity : nums2[2 - 1]
+         = false ? -Infinity : nums2[1]
+         = nums2[1]
+         = 989
+```
+
+**Cálculo de minRight2:**
+```
+minRight2 = partition2 === n ? Infinity : nums2[partition2]
+          = 2 === 4 ? Infinity : nums2[2]
+          = false ? Infinity : nums2[2]
+          = nums2[2]
+          = 994
+```
+
+---
+
+**Saída:**
+```
+📊 Valores nas BORDAS do corte:
+   maxLeft1 (maior à esquerda de nums1): 1
+   minRight1 (menor à direita de nums1): 2
+   maxLeft2 (maior à esquerda de nums2): 989
+   minRight2 (menor à direita de nums2): 994
+```
+
+---
+
+### 🎨 Representação Visual Detalhada
+
+```
+        nums1                    nums2
+    ┌───┬───┐              ┌─────┬─────┬─────┬─────┐
+    │ 1 │ 2 │              │ 890 │ 989 │ 994 │ 999 │
+    └───┴───┘              └─────┴─────┴─────┴─────┘
+      ↑   ↑                  ↑     ↑     ↑     ↑
+      │   │                  │     │     │     │
+  maxLeft1│              maxLeft2  │  minRight2│
+          │                        │           │
+      minRight1                    │           │
+                                   │           │
+    ┌───────────────────┐    ┌─────┴─────┬─────┴─────┐
+    │  LADO ESQUERDO    │    │     LADO DIREITO       │
+    │  [1, 890, 989]    │    │   [2, 994, 999]        │
+    └───────────────────┘    └────────────────────────┘
+          ↑                              ↑
+    max(1, 989) = 989              min(2, 994) = 2
+```
+
+**Saída:**
+```
+🎨 Representação Visual:
+   Lado ESQUERDO: [..., maxLeft1=1, maxLeft2=989]
+   Lado DIREITO:  [minRight1=2, minRight2=994, ...]
+   
+   O maior à esquerda é: max(1, 989) = 989
+   O menor à direita é: min(2, 994) = 2
+```
+
+---
+
+### ✅ Verificando se o CORTE está CORRETO
+
+**Regra:** Para o corte estar correto, precisamos que:
+1. Todos os elementos à esquerda ≤ todos os elementos à direita
+2. Especificamente:
+   - `maxLeft1 ≤ minRight2`
+   - `maxLeft2 ≤ minRight1`
+
+---
+
+**Verificação da Condição 1:**
+```javascript
+maxLeft1 <= minRight2
+1 <= 994
+true ✓
+```
+
+**Explicação:**
+```
+maxLeft1 = 1 (maior elemento à esquerda de nums1)
+minRight2 = 994 (menor elemento à direita de nums2)
+
+1 ≤ 994? SIM! ✓
+
+Isso significa: O maior elemento que pegamos de nums1 à esquerda (1)
+é menor que o menor elemento que deixamos de nums2 à direita (994).
+Isso está CORRETO!
+```
+
+---
+
+**Verificação da Condição 2:**
+```javascript
+maxLeft2 <= minRight1
+989 <= 2
+false ✗
+```
+
+**Explicação:**
+```
+maxLeft2 = 989 (maior elemento à esquerda de nums2)
+minRight1 = 2 (menor elemento à direita de nums1)
+
+989 ≤ 2? NÃO! ✗
+
+PROBLEMA DETECTADO! 🚨
+
+Isso significa: Pegamos um elemento MUITO GRANDE de nums2 (989)
+que ficou à ESQUERDA, mas ele é maior que um elemento pequeno
+de nums1 (2) que ficou à DIREITA.
+
+Isso está ERRADO! O lado esquerdo deve ter elementos ≤ lado direito!
+```
+
+---
+
+**Saída:**
+```
+✅ Verificando se o CORTE está CORRETO:
+   Condição 1: maxLeft1 ≤ minRight2?
+               1 ≤ 994? ✓ SIM
+   Condição 2: maxLeft2 ≤ minRight1?
+               989 ≤ 2? ✗ NÃO
+
+❌ CORTE INCORRETO!
+```
+
+---
+
+### 🔧 Análise: Por Que Esse Corte Está Errado?
+
+```
+Lado ESQUERDO:  [1, 890, 989]
+Lado DIREITO:   [2, 994, 999]
+
+Problema: 989 está à ESQUERDA, mas é MUITO MAIOR que 2 que está à DIREITA!
+
+Se ordenássemos esses 6 números corretamente:
+[1, 2, 890, 989, 994, 999]
+ ↑  ↑
+ └──┴── Esses dois deveriam estar juntos!
+
+Mas nosso corte atual colocou:
+- 1 à esquerda ✓
+- 2 à direita ✗  (deveria estar à esquerda)
+- 890 à esquerda ✗  (deveria estar à direita)
+- 989 à esquerda ✗  (deveria estar à direita)
+```
+
+---
+
+### ⚠️ Decisão: Ajustar a Partição
+
+```javascript
+if (maxLeft1 > minRight2) {
+    // Pegamos MUITOS elementos de nums1
+    high = partition1 - 1;
+} else if (maxLeft2 > minRight1) {
+    // Pegamos POUCOS elementos de nums1
+    low = partition1 + 1;
+}
+```
+
+**Análise:**
+```
+maxLeft2 > minRight1
+989 > 2
+
+Interpretação:
+- Pegamos MUITOS elementos de nums2 à esquerda (pegamos 890 e 989)
+- Isso significa que pegamos POUCOS elementos de nums1 à esquerda
+- Solução: AUMENTAR partition1 (pegar mais de nums1)
+```
+
+**Lógica Detalhada:**
+```
+Problema atual:
+partition1 = 1 (pegamos só [1] de nums1)
+partition2 = 2 (pegamos [890, 989] de nums2)
+
+O que queremos:
+- Pegar MAIS elementos de nums1 à esquerda
+- Isso automaticamente fará pegarmos MENOS de nums2
+
+Como fazer?
+→ Mover LOW para a direita
+→ low = partition1 + 1 = 1 + 1 = 2
+```
+
+**Saída:**
+```
+⚠️  DECISÃO: maxLeft2 > minRight1
+   989 > 2
+   
+   🎯 Diagnóstico:
+   → Pegamos MUITOS elementos de nums2 (890 e 989)
+   → Isso significa pegamos POUCOS elementos de nums1 (só o 1)
+   → Precisamos AUMENTAR partition1 (pegar mais de nums1)
+   
+   🔧 Ação:
+   → Movendo low de 0 para 2
+   → Novo espaço de busca: [2, 2]
+```
+
+---
+
+## 🔄 ITERAÇÃO 2
+
+### ═══════════════════════════════════════════════════════════
+
+```
+🔄 ITERAÇÃO 2
+═══════════════════════════════════════════════════════════
+```
+
+---
+
+### 📍 Calculando Partições
+
+```javascript
+low = 2  (atualizado na iteração anterior)
+high = 2 (permanece)
+
+partition1 = Math.floor((2 + 2) / 2) = Math.floor(2) = 2
+```
+
+**Cálculo:**
+```
+partition1 = Math.floor((low + high) / 2)
+          = Math.floor((2 + 2) / 2)
+          = Math.floor(4 / 2)
+          = Math.floor(2)
+          = 2
+```
+
+**Interpretação:**
+```
+partition1 = 2 significa:
+→ Pegar TODOS os 2 elementos de nums1 para o lado ESQUERDO
+→ nums1: [1, 2] | []
+```
+
+---
+
+```javascript
+partition2 = Math.floor((2 + 4 + 1) / 2) - 2
+          = Math.floor(3.5) - 2
+          = 3 - 2
+          = 1
+```
+
+**Interpretação:**
+```
+partition2 = 1 significa:
+→ Pegar apenas 1 elemento de nums2 para o lado ESQUERDO
+→ nums2: [890] | [989, 994, 999]
+```
+
+---
+
+**Saída:**
+```
+📍 Calculando partições:
+   partition1 = Math.floor((2 + 2) / 2) = 2
+   partition2 = Math.floor((2 + 4 + 1) / 2) - 2 = 1
+
+   Interpretação:
+   → Pegar 2 elemento(s) de nums1 (TODOS!)
+   → Pegar 1 elemento(s) de nums2
+   → Total à esquerda: 3 elementos
+   → Total à direita: 3 elementos
+```
+
+---
+
+### ✂️ Visualização do CORTE
+
+```
+✂️  Visualização do CORTE:
+   nums1: [1, 2] | []
+          ─────┘   
+              ↑     
+          maxLeft1  minRight1 = ∞
+      
+   nums2: [890] | [989, 994, 999]
+          ────┘   └───────────────
+            ↑           ↑
+        maxLeft2    minRight2
+```
+
+**Representação Visual Completa:**
+
+```
+LADO ESQUERDO (3 elementos):
+┌───────────────────────┐
+│  De nums1: [1, 2]     │
+│  De nums2: [890]      │
+│  Total: [1, 2, 890]   │
+└───────────────────────┘
+     ↑  ↑   ↑
+     │  │   └─── maxLeft2 = 890
+     │  └─────── maxLeft1 = 2
+     └────────── Todos à esquerda
+
+LADO DIREITO (3 elementos):
+┌───────────────────────────┐
+│  De nums1: []             │
+│  De nums2: [989, 994, 999]│
+│  Total: [989, 994, 999]   │
+└───────────────────────────┘
+              ↑
+              └─── minRight2 = 989
+              minRight1 = ∞ (nums1 acabou!)
+```
+
+**Saída:**
+```
+✂️  Visualização do CORTE:
+   nums1: [1, 2] | []
+   nums2: [890] | [989, 994, 999]
+
+🎨 Representação Conceitual:
+   Lado ESQUERDO:  [1, 2, 890]        (3 elementos)
+   Lado DIREITO:   [989, 994, 999]    (3 elementos)
+```
+
+---
+
+### 📊 Valores nas BORDAS do Corte
+
+**Cálculo de maxLeft1:**
+```
+maxLeft1 = partition1 === 0 ? -Infinity : nums1[partition1 - 1]
+         = 2 === 0 ? -Infinity : nums1[2 - 1]
+         = false ? -Infinity : nums1[1]
+         = nums1[1]
+         = 2
+```
+
+**Cálculo de minRight1:**
+```
+minRight1 = partition1 === m ? Infinity : nums1[partition1]
+          = 2 === 2 ? Infinity : nums1[2]
+          = true ? Infinity : nums1[2]
+          = Infinity
+
+Por quê Infinity?
+→ Pegamos TODOS os elementos de nums1 (partition1 = m = 2)
+→ Não há nada à DIREITA de nums1
+→ Usamos Infinity para representar "vazio"
+```
+
+**Cálculo de maxLeft2:**
+```
+maxLeft2 = partition2 === 0 ? -Infinity : nums2[partition2 - 1]
+         = 1 === 0 ? -Infinity : nums2[1 - 1]
+         = false ? -Infinity : nums2[0]
+         = nums2[0]
+         = 890
+```
+
+**Cálculo de minRight2:**
+```
+minRight2 = partition2 === n ? Infinity : nums2[partition2]
+          = 1 === 4 ? Infinity : nums2[1]
+          = false ? Infinity : nums2[1]
+          = nums2[1]
+          = 989
+```
+
+---
+
+**Saída:**
+```
+📊 Valores nas BORDAS do corte:
+   maxLeft1 (maior à esquerda de nums1): 2
+   minRight1 (menor à direita de nums1): +∞
+   maxLeft2 (maior à esquerda de nums2): 890
+   minRight2 (menor à direita de nums2): 989
+
+💡 Nota: minRight1 = Infinity porque pegamos TODOS os elementos de nums1!
+```
+
+---
+
+### 🎨 Representação Visual Detalhada
+
+```
+        nums1                         nums2
+    ┌───┬───┐              ┌─────┬─────┬─────┬─────┐
+    │ 1 │ 2 │              │ 890 │ 989 │ 994 │ 999 │
+    └───┴───┘              └─────┴─────┴─────┴─────┘
+      ↑   ↑                  ↑     ↑     ↑     ↑
+      │   │                  │     │     │     │
+      │maxLeft1          maxLeft2  │     │     │
+      │   │                        │     │     │
+      └───┴────────────────────────┘     │     │
+          Todos à ESQUERDA            minRight2│
+                                              │
+          minRight1 = ∞                       │
+          (não há nada à direita)             │
+                                              │
+    ┌──────────────────────┐    ┌─────┴───────┴─────┐
+    │   LADO ESQUERDO      │    │   LADO DIREITO      │
+    │   [1, 2, 890]        │    │   [989, 994, 999]   │
+    └──────────────────────┘    └─────────────────────┘
+            ↑                              ↑
+    max(2, 890) = 890              min(∞, 989) = 989
+```
+
+**Saída:**
+```
+🎨 Representação Visual:
+   Lado ESQUERDO: [..., maxLeft1=2, maxLeft2=890]
+   Lado DIREITO:  [minRight1=∞, minRight2=989, ...]
+   
+   O maior à esquerda é: max(2, 890) = 890
+   O menor à direita é: min(∞, 989) = 989
+```
+
+---
+
+### ✅ Verificando se o CORTE está CORRETO
+
+**Verificação da Condição 1:**
+```javascript
+maxLeft1 <= minRight2
+2 <= 989
+true ✓
+```
+
+**Explicação Detalhada:**
+```
+maxLeft1 = 2 (maior elemento à esquerda de nums1)
+minRight2 = 989 (menor elemento à direita de nums2)
+
+2 ≤ 989? SIM! ✓
+
+Isso significa: O maior elemento que pegamos de nums1 à esquerda (2)
+é menor que o menor elemento que deixamos de nums2 à direita (989).
+Perfeito! ✓
+```
+
+---
+
+**Verificação da Condição 2:**
+```javascript
+maxLeft2 <= minRight1
+890 <= Infinity
+true ✓
+```
+
+**Explicação Detalhada:**
+```
+maxLeft2 = 890 (maior elemento à esquerda de nums2)
+minRight1 = Infinity (não há elementos à direita de nums1)
+
+890 ≤ ∞? SIM! ✓
+
+Isso significa: O maior elemento que pegamos de nums2 à esquerda (890)
+é menor que... bem, não há nada à direita de nums1 (representado por ∞).
+Como 890 é menor que infinito, isso está correto! ✓
+
+💡 O Infinity aqui é essencial! Sem ele, teríamos erro ao tentar
+acessar nums1[2] (que não existe).
+```
+
+---
+
+**Saída:**
+```
+✅ Verificando se o CORTE está CORRETO:
+   Condição 1: maxLeft1 ≤ minRight2?
+               2 ≤ 989? ✓ SIM
+   Condição 2: maxLeft2 ≤ minRight1?
+               890 ≤ ∞? ✓ SIM
+
+✅ AMBAS AS CONDIÇÕES SATISFEITAS!
+🎉 CORTE CORRETO ENCONTRADO!
+```
+
+---
+
+### 🎊 Por Que Esse Corte Está Correto?
+
+```
+Lado ESQUERDO:  [1, 2, 890]
+Lado DIREITO:   [989, 994, 999]
+
+Verificação manual:
+- O MAIOR à esquerda é 890
+- O MENOR à direita é 989
+- 890 < 989 ✓ CORRETO!
+
+Se ordenássemos todos juntos:
+[1, 2, 890, 989, 994, 999]
+ └─────┴─────┘
+ Lado ESQUERDO  └─────────┘
+                Lado DIREITO
+
+Perfeito! O corte está no lugar certo! ✓
+```
+
+---
+
+### 📐 Cálculo da MEDIANA
+
+Como o total de elementos é **PAR (6 elementos)**, a mediana é a **média** dos dois elementos centrais.
+
+```javascript
+// Array PAR: mediana = (maior da esquerda + menor da direita) / 2
+const maxLeft = Math.max(maxLeft1, maxLeft2);
+const minRight = Math.min(minRight1, minRight2);
+const mediana = (maxLeft + minRight) / 2;
+```
+
+**Cálculo do maxLeft:**
+```
+maxLeft = Math.max(maxLeft1, maxLeft2)
+        = Math.max(2, 890)
+        = 890
+```
+
+**Explicação:**
+```
+Entre todos os elementos à ESQUERDA:
+- De nums1: [1, 2] → maior é 2
+- De nums2: [890] → maior é 890
+
+O maior GERAL à esquerda é: 890
+```
+
+---
+
+**Cálculo do minRight:**
+```
+minRight = Math.min(minRight1, minRight2)
+         = Math.min(Infinity, 989)
+         = 989
+```
+
+**Explicação:**
+```
+Entre todos os elementos à DIREITA:
+- De nums1: [] → não há elementos (∞)
+- De nums2: [989, 994, 999] → menor é 989
+
+O menor GERAL à direita é: 989
+```
+
+---
+
+**Cálculo Final da Mediana:**
+```
+mediana = (maxLeft + minRight) / 2
+        = (890 + 989) / 2
+        = 1879 / 2
+        = 939.5
+```
+
+**Visualização:**
+```
+Array completo ordenado: [1, 2, 890, 989, 994, 999]
+                                  ↑    ↑
+                                  └────┴──── Esses dois elementos centrais!
+
+Para array PAR, a mediana é a MÉDIA desses dois:
+mediana = (890 + 989) / 2 = 939.5 ✓
+```
+
+---
+
+**Saída:**
+```
+📐 Cálculo da MEDIANA (Array PAR):
+   maxLeft = max(maxLeft1, maxLeft2)
+           = max(2, 890)
+           = 890
+           
+   minRight = min(minRight1, minRight2)
+            = min(∞, 989)
+            = 989
+            
+   mediana = (maxLeft + minRight) / 2
+           = (890 + 989) / 2
+           = 1879 / 2
+           = 939.5
+
+🏆 RESULTADO FINAL: 939.5
+```
+
+---
+
+## 🎉 CONCLUSÃO DA EXECUÇÃO
+
+```
+🎉 SUCESSO!
+═══════════════════════════════════════════════════════════
+
+Arrays de entrada:
+  nums1: [1, 2]
+  nums2: [890, 989, 994, 999]
+
+Array combinado (conceitual):
+  [1, 2, 890, 989, 994, 999]
+
+Mediana encontrada: 939.5
+
+Iterações necessárias: 2
+Complexidade: O(log(min(m,n))) = O(log 2) ≈ O(1)
+
+Tempo total: ~0.001ms (extremamente rápido!)
+```
+
+---
+
+## 🎓 Análise Completa do Algoritmo
+
+### 📊 Por Que Foi Tão Rápido?
+
+```
+Tamanho do array menor (nums1): m = 2
+Complexidade: O(log m) = O(log 2) ≈ O(1)
+
+Iterações necessárias: log₂(2) = 1 iteração (na teoria)
+Iterações reais: 2 (ajuste de corte)
+
+Compare com abordagens ingênuas:
+- Merge + Sort: O((m+n) log(m+n)) = O(6 log 6) ≈ 15 operações
+- Binary Search: O(log(min(m,n))) = O(log 2) ≈ 2 operações
+
+Resultado: ~7x mais rápido! 🚀
+```
+
+---
+
+### 🎯 Resumo das Iterações
+
+#### **Iteração 1:**
+```
+Tentativa: partition1 = 1
+Corte: nums1[1] | nums2[890, 989]
+Problema: 989 > 2 (elemento grande à esquerda, pequeno à direita)
+Decisão: Pegar MAIS de nums1
+```
+
+#### **Iteração 2:**
+```
+Tentativa: partition1 = 2
+Corte: nums1[1, 2] | nums2[890]
+Verificação: 2 ≤ 989 ✓ e 890 ≤ ∞ ✓
+Sucesso: Corte correto! Mediana = 939.5
+```
+
+---
+
+### 🔑 Pontos-Chave do Algoritmo
+
+#### 1️⃣ **Por que Binary Search?**
+```
+Em vez de processar todos os 6 elementos:
+[1, 2, 890, 989, 994, 999]
+
+Processamos apenas os necessários usando busca binária:
+- Testamos partition1 = 1 (errado)
+- Ajustamos para partition1 = 2 (correto)
+- Total: 2 tentativas ao invés de 6 operações!
+```
+
+#### 2️⃣ **Papel do Infinity**
+```
+Quando partition1 = 2 (pegamos TODOS de nums1):
+- Não existe nums1[2]
+- Usamos minRight1 = Infinity
+- Isso permite que maxLeft2 ≤ Infinity seja sempre true
+- Sem Infinity, teríamos erro de "index out of bounds"!
+```
+
+#### 3️⃣ **Decisão de Ajuste**
+```
+Se maxLeft2 > minRight1:
+→ Pegamos MUITOS de nums2
+→ Logo, pegamos POUCOS de nums1
+→ Solução: AUMENTAR partition1 (pegar mais de nums1)
+→ Isso reduz automaticamente partition2 (pegar menos de nums2)
+```
+
+---
+
+## 📚 Conceitos Matemáticos
+
+### 🎯 Por Que Funciona?
+
+```
+Propriedade da Mediana:
+- Metade dos elementos ≤ mediana
+- Metade dos elementos ≥ mediana
+
+Traduzindo para "cortes":
+- Se dividirmos no lugar certo
+- E todos à esquerda ≤ todos à direita
+- Então a mediana está entre o maior da esquerda e o menor da direita!
+
+No nosso caso:
+Maior da esquerda: 890
+Menor da direita: 989
+Mediana: (890 + 989) / 2 = 939.5 ✓
+```
+
+---
+
+### 📐 Validação Manual
+
+```
+Array completo: [1, 2, 890, 989, 994, 999]
+
+Elementos ≤ 939.5: [1, 2, 890] → 3 elementos (metade!)
+Elementos ≥ 939.5: [989, 994, 999] → 3 elementos (metade!)
+
+✓ Confirmado! 939.5 é a mediana correta!
+```
+
+---
+
+## 🎨 Visualização Final Completa
+
+```
+ESTADO INICIAL:
+═══════════════
+nums1: [1, 2]                   (2 elementos)
+nums2: [890, 989, 994, 999]     (4 elementos)
+
+ITERAÇÃO 1 (INCORRETA):
+═══════════════════════
+nums1: [1] | [2]
+nums2: [890, 989] | [994, 999]
+
+Esquerda: [1, 890, 989]
+Direita:  [2, 994, 999]
+
+Problema: 989 > 2 ✗
+
+ITERAÇÃO 2 (CORRETA):
+════════════════════
+nums1: [1, 2] | []
+nums2: [890] | [989, 994, 999]
+
+Esquerda: [1, 2, 890]
+Direita:  [989, 994, 999]
+
+Verificação: 890 < 989 ✓
+
+MEDIANA:
+════════
+max(esquerda) = 890
+min(direita) = 989
+mediana = (890 + 989) / 2 = 939.5 ✓
+```
+
+---
+
+## ✅ Checklist de Compreensão
+
+Marque quando entender cada conceito:
+
+- [ ] Entendo por que nums1 deve ser o menor array
+- [ ] Sei calcular partition1 e partition2
+- [ ] Entendo o conceito de "corte" nos arrays
+- [ ] Sei quando usar Infinity e -Infinity
+- [ ] Entendo as duas condições de verificação
+- [ ] Sei como decidir ajustar low ou high
+- [ ] Entendo o cálculo da mediana para array PAR
+- [ ] Entendo o cálculo da mediana para array ÍMPAR
+- [ ] Consigo visualizar o processo mentalmente
+- [ ] Sei explicar por que é O(log(min(m,n)))
+
+---
+
+## 🚀 Exercícios para Praticar
+
+### Teste você mesmo com estes casos:
+
+```javascript
+// Caso 1 (similar)
+nums1 = [3, 4]
+nums2 = [100, 200, 300, 400]
+// Resposta esperada: (100 + 200) / 2 = 150
+
+// Caso 2 (ímpar)
+nums1 = [1]
+nums2 = [2, 3, 4, 5]
+// Resposta esperada: 3
+
+// Caso 3 (extremo)
+nums1 = [1000000]
+nums2 = [1, 2, 3, 4, 5, 6]
+// Resposta esperada: 4
+```
+
+---
+
+## 💡 Dicas Finais
+
+### 🎯 Como Praticar:
+
+1. **Execute mentalmente:**
+   - Desenhe os arrays no papel
+   - Trace as partições
+   - Verifique as condições
+
+2. **Use console.log:**
+   - Adicione logs em cada etapa
+   - Visualize os valores
+   - Entenda a progressão
+
+3. **Teste casos extremos:**
+   - Arrays vazios
+   - Elementos muito distantes
+   - Tamanhos muito diferentes
+
+---
+
+**🏆 Parabéns!** Você completou um debug detalhado do algoritmo de Binary Search para mediana! Este é um dos algoritmos mais elegantes e eficientes da Ciência da Computação. 🚀
+
+---
+
+## 📖 Recursos Adicionais
+
+- [LeetCode Problem #4](https://leetcode.com/problems/median-of-two-sorted-arrays/)
+- [Binary Search Visualization](https://visualgo.net/en/bst)
+- [Big O Cheat Sheet](https://www.bigocheatsheet.com/)
+
+**Continue praticando e dominando algoritmos! 💪**
