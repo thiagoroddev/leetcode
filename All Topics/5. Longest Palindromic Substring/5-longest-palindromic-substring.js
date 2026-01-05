@@ -27,7 +27,7 @@ Constraints:
 s consist of only digits and English letters.
 */
 
-// Minha solução inicial, que não passou em todos os testes
+// Minha solução inicial, que não passou em todos os testes ###################################################################################################################
 
 /**
  * @param {string} s
@@ -79,7 +79,6 @@ var longestPalindrome = function (s) {
   return maiorPalindromo;
 };
 
-
 // Solução de expand around center
 function longestPalindrome(s) {
   if (!s || s.length === 0) return ""; // Edge cases
@@ -87,7 +86,8 @@ function longestPalindrome(s) {
   let start = 0; // Início do maior palíndromo
   let maxLen = 0; // Tamanho do maior palíndromo
 
-  function expandAroundCenter(left, right) { // Função que expande em torno de um centro
+  function expandAroundCenter(left, right) {
+    // Função que expande em torno de um centro
     while (left >= 0 && right < s.length && s[left] === s[right]) {
       left--; // Expande para esquerda
       right++; // Expande para direita
@@ -95,13 +95,14 @@ function longestPalindrome(s) {
     return right - left - 1; // Retorna o tamanho do palíndromo encontrado
   }
 
-    for (let i = 0; i < s.length; i++) { // Para cada posição, tenta expandir como centro
-      const len1 = expandAroundCenter(i, i);
+  for (let i = 0; i < s.length; i++) {
+    // Para cada posição, tenta expandir como centro
+    const len1 = expandAroundCenter(i, i);
     const len2 = expandAroundCenter(i, i + 1); // Palíndromo par
     const len = Math.max(len1, len2); // Pega o maior dos dois
     if (len > maxLen) {
       maxLen = len; // Atualiza o tamanho do maior palíndromo
-      start = i - Math.floor((len - 1) / 2); // Calcula o índice de início do palíndromo  
+      start = i - Math.floor((len - 1) / 2); // Calcula o índice de início do palíndromo
     }
   }
   return s.substring(start, start + maxLen); // Retorna a substring do maior palíndromo
